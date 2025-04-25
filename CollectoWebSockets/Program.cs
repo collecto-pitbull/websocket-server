@@ -1,19 +1,26 @@
+using CollectoWebSockets.Context;
+using CollectoWebSockets.Services;
 using CollectoWebSockets.WebSockets;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddDbContext<CollectoContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.AddSignalR()
     .AddStackExchangeRedis("localhost:6379", options =>
     {
         options.Configuration.ChannelPrefix = "collecto";
     });
+
+builder.Services.AddScoped<ContributionRepository>();
 
 builder.Services.AddCors(options =>
 {
@@ -35,7 +42,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
