@@ -1,24 +1,21 @@
-# Etapa 1: build
+# Etapa 1: Build
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+WORKDIR /source
 
-# Copiar csproj y restaurar dependencias
-COPY *.sln .
-COPY CollectoWebSockets/*.csproj ./CollectoWebSockets/
-RUN dotnet restore
+COPY . .
 
-# Copiar todo y compilar
-COPY CollectoWebSockets/. ./CollectoWebSockets/
-WORKDIR /src/CollectoWebSockets
-RUN dotnet publish -c Release -o /app/publish
+# Restaurar dependencias
+RUN dotnet restore "./CollectoWebSockets.csproj" --disable-parallel
 
-# Etapa 2: runtime
-FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS final
+# Publicar la aplicación
+RUN dotnet publish "./CollectoWebSockets.csproj" -c Release -o /app --no-restore
+
+# Etapa 2: Runtime
+FROM mcr.microsoft.com/dotnet/aspnet:8.0 AS runtime
 WORKDIR /app
-COPY --from=build /app/publish .
 
-# Exponer el puerto (ajusta si es diferente)
-EXPOSE 7284
-EXPOSE 5072
+# Copiar la app publicada
+COPY --from=build /app .
 
+# Entrypoint
 ENTRYPOINT ["dotnet", "CollectoWebSockets.dll"]

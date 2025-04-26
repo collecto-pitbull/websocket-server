@@ -14,8 +14,13 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<CollectoContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
+
+string redisConnectionString = builder.Configuration["Redis:Connection"] ?? "";
+
+Console.WriteLine("Iniciando aplicacion....");
+Console.WriteLine(redisConnectionString);
 builder.Services.AddSignalR()
-    .AddStackExchangeRedis("localhost:6379", options =>
+    .AddStackExchangeRedis(redisConnectionString, options =>
     {
         options.Configuration.ChannelPrefix = "collecto";
     });

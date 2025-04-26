@@ -23,19 +23,21 @@ namespace CollectoWebSockets.WebSockets
 
         public async Task SendContribution(AddContributionDTO contributionDTO)
         {
-
+            Console.WriteLine($"Received contribution from {contributionDTO.UserName} with balance {contributionDTO.Balance}");
+            await Clients.All.SendAsync("ReceiveContribution", $"Received contribution from {contributionDTO.UserName} with balance {contributionDTO.Balance}");
+            
             try
-            {
+            {       
+                await Clients.All.SendAsync("ReceiveContribution", contributionDTO);
                 await _contributionRepository.AddContributionAsync(contributionDTO);
                 // Broadcast to all client
-                await Clients.All.SendAsync("ReceiveContribution", contributionDTO);
 
             }
             catch (Exception ex)
             {
                 // Handle exception (e.g., log it)
                 Console.WriteLine($"Error: {ex.Message}");
-                await Clients.Caller.SendAsync("Error", "An error occurred while processing your contribution.");
+                await Clients.Caller.SendAsync("Error", ex.Message);
 
             }
 

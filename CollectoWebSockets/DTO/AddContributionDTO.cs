@@ -4,7 +4,7 @@
     {
 
         public string UserName { get; set; } = null!;
-        public decimal Balance { get; set; }
+        public decimal Balance { get; set; } = 0;
 
     }
 }
