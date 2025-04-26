@@ -6,7 +6,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: collecto-pitbull/collectowebsocket
+  IMAGE_NAME: shinso-raven/collectowebsocket
 
 jobs:
   publish:
