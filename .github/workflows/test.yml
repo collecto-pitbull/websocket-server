@@ -1,7 +1,7 @@
 name: AutomatedTest
 
 on:
-  pull_request:
+  push:
     branches: ["master", "Desarrollo", "qa"]
 jobs:
   test:
